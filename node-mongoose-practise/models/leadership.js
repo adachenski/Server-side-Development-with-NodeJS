@@ -5,10 +5,7 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-require('mongoose-currency').loadType(mongoose);
-var Currency = mongoose.Types.Currency;
-
-var promotionSchema = new Schema({
+var leadershipSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -17,19 +14,20 @@ var promotionSchema = new Schema({
         type: String,
         required: true
     },
-    label: {
+    designation: {
         type: String,
-        default: ""
+        required: true
     },
-    price: {
-        type: Currency
+    abbr: {
+        type: String,
+        required: true
     },
     description: {
         type: String,
         required: true
     }
-}, {timestamps: true});
+});
 
-var Promotions = mongoose.model('Promotion', promotionSchema);
+var Leadership = mongoose.model('Leadership', leadershipSchema);
 
-module.exports = Promotions;
+module.exports = Leadership;
