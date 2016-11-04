@@ -4,30 +4,13 @@
 
 var express = require('express');
 
+
 var bookssRoutes = function(Book){
     var bookRouter = express.Router();
+    var bookController = require('../controllers/bookController')(Book);
     bookRouter.route('/')
-        .get(function(req, res){
-
-            var query = {};
-
-            if(req.query.genre){
-                query.genre = req.query.genre;
-            }
-            Book.find(query,function(err, books){
-                if(err){
-                    res.status(500)
-                        .send(err);
-                }
-                res.json(books);
-            });
-        })
-        .post(function(req,res){
-
-            var book = new Book(req.body);
-            book.save();
-            res.status(201).send(book);
-        });
+        .get(bookController.get)
+        .post(bookController.post);
 
     bookRouter.use('/:bookId',function(req, res, next){
         Book.findById(req.params.bookId, function(err, book){
@@ -47,7 +30,11 @@ var bookssRoutes = function(Book){
     bookRouter.route('/:bookId')
         .get(function(req, res){
 
-            res.json(req.book);
+            var returnBook = req.book.toJSON();
+            returnBook.links = {};
+            var newLink = 'http://'+req.headers.host+'/api/books/?genre='+returnBook.genre;
+            returnBook.links.filterByThisGenre=newLink.replace(' ','%20');
+            res.json(returnBook);
 
         })
         .put(function(req, res){
